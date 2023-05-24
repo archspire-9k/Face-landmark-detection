@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import com.swmansion.reanimated.ReanimatedPackage;
 // react-native-vision-camera
 import com.mrousavy.camera.CameraPackage;
+// vision-camera-face-detector
+import com.visioncamerafacedetector.VisionCameraFaceDetectorPluginPackage;
 
 public class PackageList {
   private Application application;
@@ -61,7 +63,8 @@ public class PackageList {
     return new ArrayList<>(Arrays.<ReactPackage>asList(
       new MainReactPackage(mConfig),
       new ReanimatedPackage(),
-      new CameraPackage()
+      new CameraPackage(),
+      new VisionCameraFaceDetectorPluginPackage()
     ));
   }
 }

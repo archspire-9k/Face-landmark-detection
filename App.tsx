@@ -4,10 +4,10 @@
  *
  * @format
  */
-
+import { runOnJS } from 'react-native-reanimated';
 import React, { useEffect, useState, useRef } from 'react';
 
-import { Camera, useCameraDevices, CameraDevice } from 'react-native-vision-camera';
+import { Camera, useCameraDevices, CameraDevice, useFrameProcessor } from 'react-native-vision-camera';
 import * as tf from '@tensorflow/tfjs';
 import * as facemesh from "@tensorflow-models/face-landmarks-detection";
 import {
@@ -17,14 +17,20 @@ import {
   Text,
   TouchableOpacity
 } from 'react-native';
+import { useIsForeground } from './src/hooks/useIsForeground';
+import { scanFaces, Face } from 'vision-camera-face-detector';
+
 
 function App(): JSX.Element {
 
   const devices = useCameraDevices();
-  const device = devices.back;
+  const device = devices.front;
+  const isForeground = useIsForeground();
+
   const [cameraOn, setCameraOn] = useState(false);
   const [permissions, setPermissions] = useState(false);
   const [cameraList, setCameraList] = useState<CameraDevice[]>([]);
+  const [faces, setFaces] = React.useState<Face[]>();
 
   const getPermissions = async () => {
     const cameraPermission = await Camera.getCameraPermissionStatus();
@@ -56,9 +62,20 @@ function App(): JSX.Element {
     }
   };
 
+
+  const frameProcessor = useFrameProcessor((frame) => {
+    'worklet';
+    const scannedFaces = scanFaces(frame);
+    runOnJS(setFaces)(scannedFaces);
+  }, []);
+
+  useEffect(() => {
+    console.log(faces);
+  }, [faces]);
+
   useEffect(() => {
     getPermissions();
-    getAllCams()
+    getAllCams();
 
   }, []);
 
@@ -86,7 +103,7 @@ function App(): JSX.Element {
         <TouchableOpacity onPress={() => setCameraOn(true)} style={{ marginTop: 30, backgroundColor: '#28a745' }}>
           <Text style={{ marginHorizontal: 20, marginVertical: 10, color: 'white' }}>ON</Text>
         </TouchableOpacity>
-        <Text style={{ marginHorizontal: 20, marginVertical: 10, color: 'white' }}>ON</Text>
+        <Text style={{ marginHorizontal: 20, marginVertical: 10, color: 'white' }}>{cameraList.map(obj => obj.supportsParallelVideoProcessing.toString())}</Text>
       </View>
     );
   }
@@ -95,7 +112,9 @@ function App(): JSX.Element {
     <Camera
       style={StyleSheet.absoluteFill}
       device={device}
-      isActive={true}
+      isActive={isForeground}
+      frameProcessor={frameProcessor}
+      frameProcessorFps={5}
     />
   );
 
