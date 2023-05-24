@@ -1,10 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-import { runOnJS } from 'react-native-reanimated';
+import 'react-native-reanimated'
 import React, { useEffect, useState, useRef } from 'react';
 
 import { Camera, useCameraDevices, CameraDevice, useFrameProcessor } from 'react-native-vision-camera';
@@ -18,19 +12,19 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { useIsForeground } from './src/hooks/useIsForeground';
-import { scanFaces, Face } from 'vision-camera-face-detector';
+import { useScanBarcodes, BarcodeFormat } from 'vision-camera-code-scanner';
 
 
 function App(): JSX.Element {
 
   const devices = useCameraDevices();
-  const device = devices.front;
+  const device = devices.back;
   const isForeground = useIsForeground();
 
   const [cameraOn, setCameraOn] = useState(false);
   const [permissions, setPermissions] = useState(false);
   const [cameraList, setCameraList] = useState<CameraDevice[]>([]);
-  const [faces, setFaces] = React.useState<Face[]>();
+  
 
   const getPermissions = async () => {
     const cameraPermission = await Camera.getCameraPermissionStatus();
@@ -63,15 +57,9 @@ function App(): JSX.Element {
   };
 
 
-  const frameProcessor = useFrameProcessor((frame) => {
-    'worklet';
-    const scannedFaces = scanFaces(frame);
-    runOnJS(setFaces)(scannedFaces);
-  }, []);
-
-  useEffect(() => {
-    console.log(faces);
-  }, [faces]);
+  const [frameProcessor, barcodes] = useScanBarcodes([BarcodeFormat.QR_CODE], {
+    checkInverted: true,
+  });
 
   useEffect(() => {
     getPermissions();
@@ -109,17 +97,35 @@ function App(): JSX.Element {
   }
 
   return (
-    <Camera
-      style={StyleSheet.absoluteFill}
-      device={device}
-      isActive={isForeground}
-      frameProcessor={frameProcessor}
-      frameProcessorFps={5}
-    />
+    <>
+      <Camera
+        style={StyleSheet.absoluteFill}
+        device={device}
+        isActive={isForeground}
+        frameProcessor={frameProcessor}
+        frameProcessorFps={5}
+      />
+      {barcodes.map((barcode, idx) => (
+        <Text key={idx} style={styles.barcodeTextURL}>
+          {barcode.displayValue}
+        </Text>
+      ))}
+    </>
   );
 
 }
 
-
+const styles = StyleSheet.create({
+  barcodeTextURL: {
+    position: 'absolute',
+    bottom: 50,
+    left: 100,
+    right: 100,
+    fontSize: 20,
+    color: 'white',
+    fontWeight: 'bold',
+    backgroundColor: '#28a745',
+  },
+});
 
 export default App;
