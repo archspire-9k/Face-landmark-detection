@@ -200,6 +200,7 @@ attr iconTint
 attr iconTintMode
 attr iconifiedByDefault
 attr imageButtonStyle
+attr implementationMode
 attr indeterminateProgressStyle
 attr initialActivityCount
 attr isAutofillInlineSuggestionTheme
@@ -279,6 +280,7 @@ attr roundedCornerRadius
 attr roundingBorderColor
 attr roundingBorderPadding
 attr roundingBorderWidth
+attr scaleType
 attr searchHintIcon
 attr searchIcon
 attr searchViewStyle
@@ -767,6 +769,7 @@ id checkbox
 id checked
 id chronometer
 id collapseActionView
+id compatible
 id content
 id contentPanel
 id custom
@@ -779,6 +782,9 @@ id edit_query
 id end
 id expand_activities_button
 id expanded_menu
+id fillCenter
+id fillEnd
+id fillStart
 id fitBottomStart
 id fitCenter
 id fitEnd
@@ -790,6 +796,8 @@ id focusCrop
 id forever
 id fps_text
 id fragment_container_view_tag
+id ghost_view
+id ghost_view_holder
 id group_divider
 id home
 id homeAsUp
@@ -820,6 +828,8 @@ id notification_main_column_container
 id off
 id on
 id parentPanel
+id parent_matrix
+id performance
 id pointer_events
 id progress_circular
 id progress_horizontal
@@ -836,6 +846,8 @@ id rn_redbox_reload_button
 id rn_redbox_report_button
 id rn_redbox_report_label
 id rn_redbox_stack
+id save_non_transition_alpha
+id save_overlay_view
 id screen
 id scrollIndicatorDown
 id scrollIndicatorUp
@@ -887,6 +899,11 @@ id titleDividerNoCustom
 id title_template
 id top
 id topPanel
+id transition_current_scene
+id transition_layout_save
+id transition_position
+id transition_scene_layoutid_cache
+id transition_transform
 id unchecked
 id uniform
 id up
@@ -1462,6 +1479,7 @@ styleable MenuItem android_icon android_enabled android_id android_checked andro
 styleable MenuView android_windowAnimationStyle android_itemTextAppearance android_horizontalDivider android_verticalDivider android_headerBackground android_itemBackground android_itemIconDisabledAlpha preserveIconSpacing subMenuArrow
 styleable PopupWindow android_popupBackground android_popupAnimationStyle overlapAnchor
 styleable PopupWindowBackgroundState state_above_anchor
+styleable PreviewView implementationMode scaleType
 styleable RecycleListView paddingBottomNoButtons paddingTopNoTitle
 styleable SearchView android_focusable android_maxWidth android_inputType android_imeOptions closeIcon commitIcon defaultQueryHint goIcon iconifiedByDefault layout queryBackground queryHint searchHintIcon searchIcon submitBackground suggestionRowLayout voiceIcon
 styleable SimpleDraweeView actualImageResource actualImageUri backgroundImage fadeDuration failureImage failureImageScaleType overlayImage placeholderImage placeholderImageScaleType pressedStateOverlayImage progressBarAutoRotateInterval progressBarImage progressBarImageScaleType retryImage retryImageScaleType roundAsCircle roundBottomEnd roundBottomLeft roundBottomRight roundBottomStart roundTopEnd roundTopLeft roundTopRight roundTopStart roundWithOverlayColor roundedCornerRadius roundingBorderColor roundingBorderPadding roundingBorderWidth viewAspectRatio

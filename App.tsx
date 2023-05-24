@@ -19,7 +19,7 @@ import {
 
 function App(): JSX.Element {
 
-  const devices = useCameraDevices('wide-angle-camera');
+  const devices = useCameraDevices();
   const device = devices.back;
   const [cameraOn, setCameraOn] = useState(false);
   const [permissions, setPermissions] = useState(false);
