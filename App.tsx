@@ -36,6 +36,9 @@ function App(): JSX.Element {
     if (newCameraPermission === 'authorized') {
       setPermissions(true);
     }
+    else if (newCameraPermission === 'denied'){
+      //todo: link to setting to change manually
+    }
   };
   
   useEffect(() => {
