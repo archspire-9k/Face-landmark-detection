@@ -117,7 +117,7 @@ function App(): JSX.Element {
         </TouchableOpacity>
 
         {barcodes.map((barcode, idx) => (
-          <View key={idx} style={{ flexDirection: 'row' }}>
+          <View key={idx} style={{ flexDirection: 'row', marginVertical: 20 }}>
             <View style={{
               width: 300
             }}>
