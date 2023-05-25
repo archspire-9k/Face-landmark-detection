@@ -117,11 +117,15 @@ function App(): JSX.Element {
         </TouchableOpacity>
 
         {barcodes.map((barcode, idx) => (
-          <View key={idx}>
-            <Text style={styles.barcodeTextURL}>
-              {barcode.displayValue}
-            </Text>
-            <Icon.Button name="clipboard" size={24} color="black" onPress={() => copyToClipboard(barcode.displayValue)}/>
+          <View key={idx} style={{ flexDirection: 'row' }}>
+            <View style={{
+              width: 300
+            }}>
+              <Text style={styles.barcodeTextURL}>
+                {barcode.displayValue}
+              </Text>
+            </View>
+            <Icon name="clipboard" size={24} color="white" onPress={() => copyToClipboard(barcode.displayValue)} />
           </View>
         ))}
       </View>
@@ -147,7 +151,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: 'white',
     fontWeight: 'bold',
-    // backgroundColor: '#28a745',
+    marginHorizontal: 24
   },
 });
 
