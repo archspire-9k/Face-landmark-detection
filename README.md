@@ -1,2 +1,2 @@
-# Facial-Detail-Detection
- Using React Native and Tensorflow to contruct high detail facemesh
+# QR and Barcode Scanner
+ Using React Native and MLKit scanner to detech multiple different QR and Barcodes at once

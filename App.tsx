@@ -1,18 +1,19 @@
-import 'react-native-reanimated'
+import { runOnJS, runOnUI, useSharedValue } from 'react-native-reanimated'
 import React, { useEffect, useState, useRef } from 'react';
+import Icon from "react-native-vector-icons/Feather";
 
 import { Camera, useCameraDevices, CameraDevice, useFrameProcessor } from 'react-native-vision-camera';
-import * as tf from '@tensorflow/tfjs';
-import * as facemesh from "@tensorflow-models/face-landmarks-detection";
 import {
   View,
   Button,
   StyleSheet,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert
 } from 'react-native';
 import { useIsForeground } from './src/hooks/useIsForeground';
-import { useScanBarcodes, BarcodeFormat } from 'vision-camera-code-scanner';
+import { scanBarcodes, BarcodeFormat, Barcode } from 'vision-camera-code-scanner';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 
 function App(): JSX.Element {
@@ -20,11 +21,27 @@ function App(): JSX.Element {
   const devices = useCameraDevices();
   const device = devices.back;
   const isForeground = useIsForeground();
+  const barcodeScanned = useSharedValue(false);
 
   const [cameraOn, setCameraOn] = useState(false);
   const [permissions, setPermissions] = useState(false);
   const [cameraList, setCameraList] = useState<CameraDevice[]>([]);
-  
+  const [copiedText, setCopiedText] = useState('');
+  const [barcodes, setBarcodes] = useState<Barcode[]>([])
+
+  const copyToClipboard = (text: any) => {
+    if (text != undefined) {
+      Clipboard.setString(text);
+    }
+    else {
+      Alert.alert("No QR Code found", "Please try scanning again",
+        [{
+          text: 'Ask me later',
+          onPress: () => console.log('Ask me later pressed'),
+        }]);
+    }
+  };
+
 
   const getPermissions = async () => {
     const cameraPermission = await Camera.getCameraPermissionStatus();
@@ -57,9 +74,16 @@ function App(): JSX.Element {
   };
 
 
-  const [frameProcessor, barcodes] = useScanBarcodes([BarcodeFormat.QR_CODE], {
-    checkInverted: true,
-  });
+  const frameProcessor = useFrameProcessor((frame) => {
+    'worklet';
+    if (!barcodeScanned.value) {
+      const detectedBarcodes = scanBarcodes(frame, [BarcodeFormat.QR_CODE], { checkInverted: true });
+      runOnJS(setBarcodes)(detectedBarcodes);
+      if (detectedBarcodes.length > 0) {
+        runOnJS(setCameraOn)(false);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     getPermissions();
@@ -88,10 +112,18 @@ function App(): JSX.Element {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text>Turn on the camera</Text>
-        <TouchableOpacity onPress={() => setCameraOn(true)} style={{ marginTop: 30, backgroundColor: '#28a745' }}>
+        <TouchableOpacity onPress={() => setCameraOn(true)} style={{ marginVertical: 30, backgroundColor: '#28a745' }}>
           <Text style={{ marginHorizontal: 20, marginVertical: 10, color: 'white' }}>ON</Text>
         </TouchableOpacity>
-        <Text style={{ marginHorizontal: 20, marginVertical: 10, color: 'white' }}>{cameraList.map(obj => obj.supportsParallelVideoProcessing.toString())}</Text>
+
+        {barcodes.map((barcode, idx) => (
+          <View key={idx}>
+            <Text style={styles.barcodeTextURL}>
+              {barcode.displayValue}
+            </Text>
+            <Icon.Button name="clipboard" size={24} color="black" onPress={() => copyToClipboard(barcode.displayValue)}/>
+          </View>
+        ))}
       </View>
     );
   }
@@ -105,11 +137,6 @@ function App(): JSX.Element {
         frameProcessor={frameProcessor}
         frameProcessorFps={5}
       />
-      {barcodes.map((barcode, idx) => (
-        <Text key={idx} style={styles.barcodeTextURL}>
-          {barcode.displayValue}
-        </Text>
-      ))}
     </>
   );
 
@@ -117,14 +144,10 @@ function App(): JSX.Element {
 
 const styles = StyleSheet.create({
   barcodeTextURL: {
-    position: 'absolute',
-    bottom: 50,
-    left: 100,
-    right: 100,
     fontSize: 20,
     color: 'white',
     fontWeight: 'bold',
-    backgroundColor: '#28a745',
+    // backgroundColor: '#28a745',
   },
 });
 

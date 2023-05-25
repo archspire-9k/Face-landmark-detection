@@ -10,11 +10,11 @@
     "test": "jest"
   },
   "dependencies": {
-    "@tensorflow-models/face-landmarks-detection": "^1.0.2",
-    "@tensorflow/tfjs": "^4.6.0",
+    "@react-native-clipboard/clipboard": "^1.11.2",
     "react": "18.2.0",
     "react-native": "0.71.8",
     "react-native-reanimated": "2.14.4",
+    "react-native-vector-icons": "^9.2.0",
     "react-native-vision-camera": "^2.15.4",
     "vision-camera-code-scanner": "^0.2.0"
   },
