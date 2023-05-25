@@ -9,7 +9,8 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  Alert
+  Alert,
+  Linking
 } from 'react-native';
 import { useIsForeground } from './src/hooks/useIsForeground';
 import { scanBarcodes, BarcodeFormat, Barcode } from 'vision-camera-code-scanner';
@@ -42,6 +43,22 @@ function App(): JSX.Element {
     }
   };
 
+  const isValidWebsite = (str: any) => {
+    try {
+      if (str != undefined) {
+        return str.startsWith("http://") || str.startsWith("https://");
+      }
+    } catch (err) {
+      return false;
+    }
+  }
+
+  const handlePress = (str: any) => {
+    if (isValidWebsite(str)) {
+      Linking.openURL('http://google.com');
+      console.log("tested")
+    }
+  };
 
   const getPermissions = async () => {
     const cameraPermission = await Camera.getCameraPermissionStatus();
@@ -79,6 +96,8 @@ function App(): JSX.Element {
     if (!barcodeScanned.value) {
       const detectedBarcodes = scanBarcodes(frame, [BarcodeFormat.QR_CODE], { checkInverted: true });
       runOnJS(setBarcodes)(detectedBarcodes);
+      //check if camera device is still running
+      //console.log("Running camera")
       if (detectedBarcodes.length > 0) {
         runOnJS(setCameraOn)(false);
       }
@@ -121,7 +140,11 @@ function App(): JSX.Element {
             <View style={{
               width: 300
             }}>
-              <Text style={styles.barcodeTextURL}>
+              <Text
+                style={[styles.barcodeTextURL, { color: isValidWebsite(barcode.displayValue) ? 'green' : 'white' }]}
+                onPress={() => {
+                  handlePress(barcode.displayValue)
+                }}>
                 {barcode.displayValue}
               </Text>
             </View>
@@ -149,7 +172,6 @@ function App(): JSX.Element {
 const styles = StyleSheet.create({
   barcodeTextURL: {
     fontSize: 20,
-    color: 'white',
     fontWeight: 'bold',
     marginHorizontal: 24
   },
